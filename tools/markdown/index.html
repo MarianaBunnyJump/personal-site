@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速记 · Markdown 编辑器</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css" id="hljs-light">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" id="hljs-dark" disabled>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<style>
+:root{
+  --grad-1:#ff9a56; --grad-2:#ff6a88;
+  --accent:#ff6a88; --accent-soft:rgba(255,106,136,.15);
+  --btn-grad:linear-gradient(135deg,#ff9a56,#ff6a88);
+  --card-bg:rgba(255,255,255,.55);
+  --card-border:rgba(255,255,255,.6);
+  --text:#2b2b3a; --text-soft:#6b6b7b;
+  --bg:#fff8f3;
+  --pattern-color:rgba(255,106,136,.07);
+  --shadow:0 8px 32px rgba(255,106,136,.18);
+  --scrollbar:rgba(255,106,136,.4);
+  --selection:rgba(255,106,136,.2);
+}
+[data-theme="dark"]{
+  --card-bg:rgba(40,42,54,.6);
+  --card-border:rgba(80,84,110,.5);
+  --text:#e8e8f0; --text-soft:#a0a0b8;
+  --bg:#1e1f2a;
+  --pattern-color:rgba(255,255,255,.04);
+  --shadow:0 8px 32px rgba(0,0,0,.4);
+  --selection:rgba(255,106,136,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--text);
+  background:linear-gradient(160deg,var(--grad-1),var(--grad-2));
+  transition:background .6s ease;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:var(--pattern);
+  opacity:.5;
+}
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
+/* Toolbar */
+.toolbar{
+  display:flex;align-items:center;gap:6px;padding:8px 14px;
+  background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--card-border);flex-wrap:wrap;z-index:10;
+}
+.tool-group{display:flex;gap:4px;align-items:center}
+.tool-divider{width:1px;height:24px;background:var(--card-border);margin:0 4px}
+.tool-btn{
+  width:34px;height:34px;border:none;border-radius:9px;cursor:pointer;
+  background:var(--btn-grad);color:#fff;font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s;
+  position:relative;
+}
+.tool-btn:hover{transform:scale(1.12);box-shadow:var(--shadow);filter:brightness(1.08)}
+.tool-btn:active{transform:scale(.95)}
+.tool-btn[data-tip]:hover::after{
+  content:attr(data-tip);position:absolute;bottom:-34px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.82);color:#fff;padding:4px 9px;border-radius:6px;
+  font-size:12px;white-space:nowrap;z-index:100;pointer-events:none;
+}
+.tool-btn.ghost{background:transparent;color:var(--text)}
+.tool-btn.ghost:hover{background:var(--accent-soft)}
+.tool-btn.active{box-shadow:0 0 0 2px var(--accent) inset}
+.toolbar-spacer{flex:1}
+.toolbar-select{
+  background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;
+  padding:5px 8px;color:var(--text);font-size:13px;cursor:pointer;outline:none;
+}
+/* Main area */
+.main{flex:1;display:flex;overflow:hidden;position:relative}
+/* Outline */
+.outline{
+  width:240px;flex-shrink:0;background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-right:1px solid var(--card-border);overflow-y:auto;padding:14px 10px;
+  transition:margin-left .35s cubic-bezier(.4,0,.2,1);margin-left:0;
+}
+.outline.collapsed{margin-left:-240px}
+.outline h3{font-size:13px;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+.outline-item{
+  display:block;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:13px;
+  color:var(--text-soft);transition:background .15s,color .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.outline-item:hover{background:var(--accent-soft);color:var(--text)}
+.outline-item.active{color:var(--accent);font-weight:600}
+/* Editor + Preview */
+.editor-wrap,.preview-wrap{
+  background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  overflow:hidden;display:flex;flex-direction:column;min-width:0;
+}
+.editor-wrap{flex:1 1 50%}
+.preview-wrap{flex:1 1 50%}
+.editor-wrap.hidden,.preview-wrap.hidden{display:none}
+.editor-header,.preview-header{
+  padding:6px 14px;font-size:12px;color:var(--text-soft);
+  border-bottom:1px solid var(--card-border);display:flex;justify-content:space-between;align-items:center;
+}
+.editor{
+  flex:1;width:100%;border:none;resize:none;outline:none;
+  background:transparent;color:var(--text);font-family:"JetBrains Mono","Fira Code","SF Mono",Consolas,monospace;
+  font-size:15px;line-height:1.7;padding:16px 20px;tab-size:2;
+}
+.editor::selection{background:var(--selection)}
+.preview{
+  flex:1;overflow-y:auto;padding:24px 32px;line-height:1.7;font-size:15px;
+}
+.preview.hidden{display:none}
+/* Splitter */
+.splitter{
+  width:6px;cursor:col-resize;background:var(--card-border);flex-shrink:0;
+  transition:background .2s;position:relative;
+}
+.splitter:hover,.splitter.dragging{background:var(--accent)}
+.splitter::after{
+  content:"⋮";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  color:var(--text-soft);font-size:14px;
+}
+/* Preview styles */
+.preview h1,.preview h2,.preview h3,.preview h4,.preview h5,.preview h6{margin:.6em 0 .4em;line-height:1.25;font-weight:700}
+.preview h1{font-size:1.9em;border-bottom:2px solid var(--accent-soft);padding-bottom:.2em}
+.preview h2{font-size:1.55em;border-bottom:1px solid var(--card-border);padding-bottom:.2em}
+.preview h3{font-size:1.3em}.preview h4{font-size:1.1em}.preview h5{font-size:1em}.preview h6{font-size:.9em;color:var(--text-soft)}
+.preview p{margin:.6em 0}
+.preview a{color:var(--accent);text-decoration:none}
+.preview a:hover{text-decoration:underline}
+.preview strong{font-weight:700}
+.preview em{font-style:italic}
+.preview del{text-decoration:line-through;color:var(--text-soft)}
+.preview ul,.preview ol{margin:.5em 0;padding-left:1.8em}
+.preview li{margin:.25em 0}
+.preview ul li::marker{color:var(--accent)}
+.preview ol li::marker{color:var(--accent)}
+.preview task-list{list-style:none;padding-left:0}
+.preview ul:has(> li.task-list-item){list-style:none;padding-left:.5em}
+.preview li.task-list-item{list-style:none}
+.preview input[type=checkbox]{margin-right:6px;accent-color:var(--accent)}
+.preview blockquote{
+  border-left:4px solid var(--accent);padding:.4em 1em;margin:.8em 0;
+  background:var(--accent-soft);border-radius:0 8px 8px 0;color:var(--text-soft);
+}
+.preview blockquote p{margin:.3em 0}
+.preview code{
+  font-family:"JetBrains Mono","Fira Code",Consolas,monospace;font-size:.9em;
+  background:var(--accent-soft);padding:.15em .4em;border-radius:4px;
+}
+.preview pre{margin:.8em 0;border-radius:10px;overflow:hidden}
+.preview pre code{background:transparent;padding:0;font-size:.88em;display:block;overflow-x:auto}
+.preview table{border-collapse:collapse;margin:.8em 0;width:100%}
+.preview th,.preview td{border:1px solid var(--card-border);padding:7px 12px;text-align:left}
+.preview th{background:var(--accent-soft);font-weight:600}
+.preview tr:nth-child(even){background:var(--accent-soft)}
+.preview hr{border:none;border-top:2px dashed var(--card-border);margin:1.5em 0}
+.preview img{max-width:100%;border-radius:10px;margin:.5em 0}
+.preview .footnote{font-size:.8em;color:var(--text-soft)}
+/* Status bar */
+.statusbar{
+  display:flex;gap:18px;padding:5px 16px;font-size:12px;color:var(--text-soft);
+  background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--card-border);
+}
+.statusbar span{cursor:default}
+.statusbar .clickable{cursor:pointer}
+.statusbar .clickable:hover{color:var(--accent)}
+/* Find/replace */
+.find-bar{
+  position:absolute;top:0;right:20px;z-index:20;display:none;flex-direction:column;gap:6px;
+  background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--card-border);border-radius:10px;padding:10px;box-shadow:var(--shadow);min-width:320px;
+}
+.find-bar.show{display:flex}
+.find-row{display:flex;gap:6px;align-items:center}
+.find-input{
+  flex:1;background:transparent;border:1px solid var(--card-border);border-radius:6px;
+  padding:5px 8px;color:var(--text);font-size:13px;outline:none;
+}
+.find-input:focus{border-color:var(--accent)}
+.find-btn{
+  border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px;
+  background:var(--btn-grad);color:#fff;
+}
+.find-btn.ghost{background:transparent;color:var(--text-soft);border:1px solid var(--card-border)}
+.find-label{font-size:12px;color:var(--text-soft);display:flex;align-items:center;gap:6px}
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;
+  align-items:center;justify-content:center;backdrop-filter:blur(4px);
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--bg);border:1px solid var(--card-border);border-radius:16px;
+  padding:28px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow);
+}
+.modal h2{margin-bottom:16px;font-size:20px}
+.modal .close{float:right;cursor:pointer;font-size:22px;color:var(--text-soft);background:none;border:none}
+.shortcut-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+.shortcut-item{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--card-border)}
+.shortcut-item kbd{
+  background:var(--accent-soft);border:1px solid var(--card-border);border-radius:4px;
+  padding:1px 6px;font-family:monospace;font-size:12px;
+}
+/* Focus mode */
+body.focus .toolbar,body.focus .statusbar,body.focus .outline,body.focus .editor-header,body.focus .preview-header{display:none}
+body.focus .splitter{opacity:.3}
+body.focus .splitter:hover{opacity:1}
+/* Scrollbar */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:5px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);background-clip:content-box}
+/* Loading */
+.loader{
+  position:fixed;inset:0;z-index:999;background:linear-gradient(160deg,var(--grad-1),var(--grad-2));
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;
+  transition:opacity .5s;
+}
+.loader.hide{opacity:0;pointer-events:none}
+.loader-title{font-size:42px;font-weight:800;color:#fff;letter-spacing:8px}
+.loader-dot{
+  width:14px;height:14px;border-radius:50%;background:#fff;
+  animation:bounce .6s infinite alternate;
+}
+@keyframes bounce{to{transform:translateY(-14px);opacity:.5}}
+/* Responsive */
+@media(max-width:768px){
+  .main{flex-direction:column}
+  .splitter{width:100%;height:6px;cursor:row-resize}
+  .splitter::after{content:"⋯"}
+  .outline{position:absolute;top:0;left:0;height:100%;z-index:5;box-shadow:var(--shadow)}
+  .toolbar{gap:3px;padding:6px 8px}
+  .tool-btn{width:30px;height:30px;font-size:13px}
+  .preview{padding:16px}
+}
+.fade-in{animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="loader" id="loader">
+  <div class="loader-title">速记</div>
+  <div class="loader-dot"></div>
+</div>
+<div id="app">
+  <!-- Toolbar -->
+  <div class="toolbar" id="toolbar">
+    <div class="tool-group">
+      <button class="tool-btn ghost" data-tip="大纲 (Ctrl+O)" onclick="toggleOutline()">☰</button>
+    </div>
+    <div class="tool-divider"></div>
+    <div class="tool-group" id="formatGroup">
+      <button class="tool-btn" data-tip="标题1 (Ctrl+1)" data-fmt="h1">H1</button>
+      <button class="tool-btn" data-tip="标题2 (Ctrl+2)" data-fmt="h2">H2</button>
+      <button class="tool-btn" data-tip="标题3 (Ctrl+3)" data-fmt="h3">H3</button>
+      <button class="tool-btn" data-tip="标题4 (Ctrl+4)" data-fmt="h4">H4</button>
+      <button class="tool-btn" data-tip="标题5 (Ctrl+5)" data-fmt="h5">H5</button>
+      <button class="tool-btn" data-tip="标题6 (Ctrl+6)" data-fmt="h6">H6</button>
+    </div>
+    <div class="tool-divider"></div>
+    <div class="tool-group">
+      <button class="tool-btn" data-tip="粗体 (Ctrl+B)" data-fmt="bold"><b>B</b></button>
+      <button class="tool-btn" data-tip="斜体 (Ctrl+I)" data-fmt="italic"><i>I</i></button>
+      <button class="tool-btn" data-tip="删除线" data-fmt="strike"><s>S</s></button>
+      <button class="tool-btn" data-tip="链接 (Ctrl+K)" data-fmt="link">🔗</button>
+      <button class="tool-btn" data-tip="图片" data-fmt="image">🖼️</button>
+    </div>
+    <div class="tool-divider"></div>
+    <div class="tool-group">
+      <button class="tool-btn" data-tip="代码块" data-fmt="code">⌘</button>
+      <button class="tool-btn" data-tip="引用 (Ctrl+Q)" data-fmt="quote">❝</button>
+      <button class="tool-btn" data-tip="有序列表 (Ctrl+Shift+7)" data-fmt="ol">🔢</button>
+      <button class="tool-btn" data-tip="无序列表 (Ctrl+Shift+8)" data-fmt="ul">•</button>
+      <button class="tool-btn" data-tip="任务列表 (Ctrl+Shift+9)" data-fmt="task">☑</button>
+      <button class="tool-btn" data-tip="表格" data-fmt="table">▦</button>
+      <button class="tool-btn" data-tip="分隔线" data-fmt="hr">―</button>
+    </div>
+    <div class="tool-divider"></div>
+    <div class="tool-group">
+      <button class="tool-btn ghost" data-tip="加载示例" onclick="loadSample()">📄</button>
+      <button class="tool-btn ghost" data-tip="导入 .md" onclick="importMd()">📥</button>
+      <button class="tool-btn ghost" data-tip="导出 .md" onclick="exportMd()">📤</button>
+      <button class="tool-btn ghost" data-tip="导出 HTML" onclick="exportHtml()">🌐</button>
+      <button class="tool-btn ghost" data-tip="导出 PDF" onclick="exportPdf()">🖨️</button>
+      <button class="tool-btn ghost" data-tip="复制富文本" onclick="copyRich()">📋</button>
+    </div>
+    <div class="toolbar-spacer"></div>
+    <div class="tool-group">
+      <select class="toolbar-select" id="themeSelect" data-tip="色系"></select>
+      <button class="tool-btn ghost" data-tip="深色/浅色" onclick="toggleDarkMode()">🌓</button>
+      <button class="tool-btn ghost" data-tip="纯编辑模式" onclick="toggleEditorOnly()">✎</button>
+      <button class="tool-btn ghost" data-tip="纯阅读模式" onclick="togglePreviewOnly()">👁</button>
+      <button class="tool-btn ghost" data-tip="专注模式 (F11)" onclick="toggleFocus()">🎯</button>
+      <button class="tool-btn ghost" data-tip="字体" onclick="toggleFont()">🔤</button>
+      <select class="toolbar-select" id="fontSize" data-tip="字号">
+        <option value="13">13px</option><option value="14">14px</option><option value="15" selected>15px</option>
+        <option value="16">16px</option><option value="17">17px</option><option value="18">18px</option>
+      </select>
+      <button class="tool-btn ghost" data-tip="快捷键 (?)" onclick="showHelp()">?</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main" id="main">
+    <aside class="outline" id="outline">
+      <h3>大纲导航</h3>
+      <div id="outlineList"></div>
+    </aside>
+    <div class="editor-wrap" id="editorWrap">
+      <div class="editor-header">
+        <span>✎ 编辑区</span>
+        <span id="charPos">行 1, 列 1</span>
+      </div>
+      <textarea class="editor" id="editor" spellcheck="false" placeholder="在此输入 Markdown..."></textarea>
+    </div>
+    <div class="splitter" id="splitter"></div>
+    <div class="preview-wrap" id="previewWrap">
+      <div class="preview-header">
+        <span>👁 预览区</span>
+        <span id="syncLabel">同步滚动: 开</span>
+      </div>
+      <div class="preview" id="preview"></div>
+    </div>
+    <!-- Find/Replace -->
+    <div class="find-bar" id="findBar">
+      <div class="find-row">
+        <input class="find-input" id="findInput" placeholder="查找..." />
+        <button class="find-btn" onclick="findNext()">下一个</button>
+        <button class="find-btn ghost" onclick="toggleReplace(true)">替换▾</button>
+        <button class="find-btn ghost" onclick="closeFind()">✕</button>
+      </div>
+      <div class="find-row" id="replaceRow" style="display:none">
+        <input class="find-input" id="replaceInput" placeholder="替换为..." />
+        <button class="find-btn" onclick="replaceOne()">替换</button>
+        <button class="find-btn" onclick="replaceAll()">全部</button>
+      </div>
+      <div class="find-row">
+        <label class="find-label"><input type="checkbox" id="findRegex" /> 正则</label>
+        <label class="find-label"><input type="checkbox" id="findCase" /> 区分大小写</label>
+        <span class="find-label" id="findCount">0 个结果</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="statusbar" id="statusbar">
+    <span id="charCount">字数: 0</span>
+    <span id="lineCount">行数: 0</span>
+    <span id="readTime">预计阅读: 0 分钟</span>
+    <span class="clickable" id="autoSaveLabel" onclick="saveNow()">自动保存: 已保存</span>
+    <span class="clickable" id="syncScrollToggle" onclick="toggleSyncScroll()">同步滚动: 开</span>
+    <span style="flex:1"></span>
+    <span class="clickable" onclick="showHelp()">快捷键 ?</span>
+  </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal">
+    <button class="close" onclick="closeHelp()">✕</button>
+    <h2>快捷键</h2>
+    <div class="shortcut-list" id="shortcutList"></div>
+  </div>
+</div>
+
+<script>
+/* ============ Theme System ============ */
+const THEMES = {
+  sunset:{name:"暖橙日落",g1:"#ff9a56",g2:"#ff6a88",accent:"#ff6a88",soft:"rgba(255,106,136,.15)",btn:"linear-gradient(135deg,#ff9a56,#ff6a88)",bg:"#fff8f3",pattern:"dots"},
+  sakura:{name:"樱花粉",g1:"#ffb3d1",g2:"#ff7eb3",accent:"#ff7eb3",soft:"rgba(255,126,179,.15)",btn:"linear-gradient(135deg,#ffb3d1,#ff7eb3)",bg:"#fff5f8",pattern:"stars"},
+  mint:{name:"薄荷绿",g1:"#71e3c8",g2:"#42c9a0",accent:"#42c9a0",soft:"rgba(66,201,160,.15)",btn:"linear-gradient(135deg,#71e3c8,#42c9a0)",bg:"#f3fff9",pattern:"waves"},
+  sky:{name:"天空蓝",g1:"#7ec8f5",g2:"#4a9fde",accent:"#4a9fde",soft:"rgba(74,159,222,.15)",btn:"linear-gradient(135deg,#7ec8f5,#4a9fde)",bg:"#f5fbff",pattern:"dots"},
+  lavender:{name:"薰衣草紫",g1:"#c8a8f5",g2:"#a87fe8",accent:"#a87fe8",soft:"rgba(168,127,232,.15)",btn:"linear-gradient(135deg,#c8a8f5,#a87fe8)",bg:"#faf7ff",pattern:"triangles"},
+  lemon:{name:"柠檬黄",g1:"#ffe066",g2:"#f5b800",accent:"#d4a017",soft:"rgba(212,160,23,.15)",btn:"linear-gradient(135deg,#ffe066,#f5b800)",bg:"#fffef5",pattern:"waves"},
+  rose:{name:"玫瑰红",g1:"#ff8a8a",g2:"#e8434f",accent:"#e8434f",soft:"rgba(232,67,79,.15)",btn:"linear-gradient(135deg,#ff8a8a,#e8434f)",bg:"#fff5f5",pattern:"stars"},
+  deepsea:{name:"深海蓝",g1:"#3a7bd5",g2:"#2a5298",accent:"#3a7bd5",soft:"rgba(58,123,213,.15)",btn:"linear-gradient(135deg,#3a7bd5,#2a5298)",bg:"#f0f5ff",pattern:"waves"},
+  forest:{name:"森林绿",g1:"#56ab2f",g2:"#2d7a1f",accent:"#3d8b2a",soft:"rgba(61,139,42,.15)",btn:"linear-gradient(135deg,#56ab2f,#2d7a1f)",bg:"#f5fff0",pattern:"triangles"},
+  night:{name:"极夜黑",g1:"#434343",g2:"#1a1a2e",accent:"#6c7cff",soft:"rgba(108,124,255,.15)",btn:"linear-gradient(135deg,#434343,#1a1a2e)",bg:"#1e1f2a",pattern:"dots"},
+};
+const PATTERNS = {
+  dots:`radial-gradient(circle, var(--pattern-color) 1.5px, transparent 1.5px)`,
+  stars:`radial-gradient(circle, var(--pattern-color) 1.5px, transparent 1.5px), radial-gradient(circle, var(--pattern-color) 1px, transparent 1px)`,
+  waves:`repeating-linear-gradient(45deg, var(--pattern-color) 0 2px, transparent 2px 12px)`,
+  triangles:`repeating-linear-gradient(60deg, var(--pattern-color) 0 2px, transparent 2px 16px), repeating-linear-gradient(-60deg, var(--pattern-color) 0 2px, transparent 2px 16px)`,
+};
+
+/* ============ State ============ */
+const S = {
+  content:"", theme:"sunset", dark:false, fontMono:true, fontSize:15,
+  splitRatio:0.5, outlineOpen:true, editorOnly:false, previewOnly:false,
+  syncScroll:true, focusMode:false,
+};
+const $ = id=>document.getElementById(id);
+const editor = $("editor");
+const preview = $("preview");
+
+/* ============ Marked Config ============ */
+marked.setOptions({
+  gfm:true, breaks:true,
+  highlight:(code,lang)=>{
+    if(lang && hljs.getLanguage(lang)) { try { return hljs.highlight(code,{language:lang}).value; } catch(e){} }
+    return hljs.highlightAuto(code).value;
+  }
+});
+function render(){
+  const raw = editor.value;
+  preview.innerHTML = DOMPurify.sanitize(marked.parse(raw));
+  updateOutline();
+  updateStats();
+  S.content = raw;
+}
+
+/* ============ Theme Apply ============ */
+function applyTheme(){
+  const t = THEMES[S.theme];
+  const r = document.documentElement.style;
+  r.setProperty("--grad-1",t.g1);
+  r.setProperty("--grad-2",t.g2);
+  r.setProperty("--accent",t.accent);
+  r.setProperty("--accent-soft",t.soft);
+  r.setProperty("--btn-grad",t.btn);
+  r.setProperty("--bg",S.dark && S.theme!=="night" ? "#1e1f2a" : t.bg);
+  r.setProperty("--pattern",PATTERNS[t.pattern]);
+  document.body.style.setProperty("--pattern",PATTERNS[t.pattern]);
+  // dark override pattern color
+  if(S.dark){ r.setProperty("--pattern-color","rgba(255,255,255,.04)"); }
+  else { r.setProperty("--pattern-color",t.soft.replace(".15",".07")); }
+  // hljs theme
+  $("hljs-light").disabled = S.dark;
+  $("hljs-dark").disabled = !S.dark;
+  $("themeSelect").value = S.theme;
+}
+function toggleDarkMode(){ S.dark=!S.dark; applyTheme(); save(); }
+
+/* ============ Toolbar formatting ============ */
+function applyFormat(type){
+  const ta = editor;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s,e);
+  let before="", after="", placeholder="文本", linePrefix="";
+  const wrap=(b,a,p)=>{ before=b; after=a; placeholder=p||"文本"; };
+  switch(type){
+    case "h1": linePrefix="# "; break;
+    case "h2": linePrefix="## "; break;
+    case "h3": linePrefix="### "; break;
+    case "h4": linePrefix="#### "; break;
+    case "h5": linePrefix="##### "; break;
+    case "h6": linePrefix="###### "; break;
+    case "bold": wrap("**","**","粗体"); break;
+    case "italic": wrap("*","*","斜体"); break;
+    case "strike": wrap("~~","~~","删除线"); break;
+    case "link": wrap("[","](https://)","链接文本"); break;
+    case "image": wrap("![","](https://)","图片描述"); break;
+    case "code": wrap("\n```\n","\n```\n","代码"); break;
+    case "quote": linePrefix="> "; break;
+    case "ol": linePrefix="1. "; break;
+    case "ul": linePrefix="- "; break;
+    case "task": linePrefix="- [ ] "; break;
+    case "hr": before="\n---\n"; after=""; placeholder=""; break;
+    case "table":
+      before="\n| 列1 | 列2 | 列3 |\n| --- | --- | --- |\n| 内容 | 内容 | 内容 |\n";
+      after=""; placeholder=""; break;
+  }
+  if(linePrefix){
+    // apply to each line in selection
+    const lineStart = ta.value.lastIndexOf("\n",s-1)+1;
+    const selected = ta.value.substring(lineStart,e);
+    const replaced = selected.split("\n").map((ln,i)=>{
+      if(type==="ol") return (i+1)+". "+ln;
+      return linePrefix+ln;
+    }).join("\n");
+    ta.value = ta.value.substring(0,lineStart)+replaced+ta.value.substring(e);
+    ta.selectionStart = lineStart;
+    ta.selectionEnd = lineStart+replaced.length;
+  } else {
+    const insertText = sel || placeholder;
+    ta.value = ta.value.substring(0,s)+before+insertText+after+ta.value.substring(e);
+    if(sel){
+      ta.selectionStart = s+before.length;
+      ta.selectionEnd = s+before.length+sel.length;
+    } else {
+      ta.selectionStart = s+before.length;
+      ta.selectionEnd = s+before.length+placeholder.length;
+    }
+  }
+  ta.focus();
+  render();
+  save();
+}
+document.getElementById("formatGroup").addEventListener("click",e=>{
+  const b = e.target.closest("[data-fmt]");
+  if(b) applyFormat(b.dataset.fmt);
+});
+document.querySelectorAll(".tool-group").forEach(g=>{
+  g.addEventListener("click",e=>{
+    const b = e.target.closest("[data-fmt]");
+    if(b && g.id!=="formatGroup") applyFormat(b.dataset.fmt);
+  });
+});
+
+/* ============ Stats ============ */
+function updateStats(){
+  const text = editor.value;
+  const chars = text.length;
+  const lines = text.split("\n").length;
+  const readMin = Math.max(1, Math.ceil(chars/400));
+  $("charCount").textContent = "字数: "+chars;
+  $("lineCount").textContent = "行数: "+lines;
+  $("readTime").textContent = "预计阅读: "+readMin+" 分钟";
+}
+function updateCursorPos(){
+  const pos = editor.selectionStart;
+  const upto = editor.value.substring(0,pos);
+  const line = upto.split("\n").length;
+  const col = pos - upto.lastIndexOf("\n");
+  $("charPos").textContent = "行 "+line+", 列 "+col;
+}
+
+/* ============ Outline ============ */
+let outlineHeadings = [];
+function updateOutline(){
+  const lines = editor.value.split("\n");
+  const heads = [];
+  lines.forEach((ln,i)=>{
+    const m = ln.match(/^(#{1,6})\s+(.+)/);
+    if(m) heads.push({level:m[1].length,text:m[2].trim(),line:i});
+  });
+  outlineHeadings = heads;
+  const list = $("outlineList");
+  list.innerHTML = heads.map(h=>
+    `<div class="outline-item" style="margin-left:${(h.level-1)*14}px" data-line="${h.line}">${h.text}</div>`
+  ).join("") || '<div style="color:var(--text-soft);font-size:12px">暂无标题</div>';
+  list.querySelectorAll(".outline-item").forEach(el=>{
+    el.onclick = ()=>{
+      const line = parseInt(el.dataset.line);
+      const pos = editor.value.split("\n").slice(0,line).join("\n").length+(line>0?1:0);
+      editor.focus();
+      editor.setSelectionRange(pos,pos);
+      editor.scrollTop = editor.scrollHeight * (line / lines.length);
+      // scroll preview
+      scrollPreviewToHeading(line);
+    };
+  });
+}
+function scrollPreviewToHeading(line){
+  if(!S.syncScroll) return;
+  const ratio = line / editor.value.split("\n").length;
+  preview.scrollTop = (preview.scrollHeight) * ratio;
+}
+
+/* ============ Sync scroll ============ */
+let syncing = false;
+editor.addEventListener("scroll",()=>{
+  if(!S.syncScroll || syncing) return;
+  syncing = true;
+  const r = editor.scrollTop / (editor.scrollHeight - editor.clientHeight);
+  preview.scrollTop = r * (preview.scrollHeight - preview.clientHeight);
+  syncing = false;
+});
+preview.addEventListener("scroll",()=>{
+  if(!S.syncScroll || syncing) return;
+  syncing = true;
+  const r = preview.scrollTop / (preview.scrollHeight - preview.clientHeight);
+  editor.scrollTop = r * (editor.scrollHeight - editor.clientHeight);
+  syncing = false;
+});
+function toggleSyncScroll(){
+  S.syncScroll = !S.syncScroll;
+  $("syncScrollToggle").textContent = "同步滚动: "+(S.syncScroll?"开":"关");
+  $("syncLabel").textContent = "同步滚动: "+(S.syncScroll?"开":"关");
+  save();
+}
+
+/* ============ Splitter ============ */
+const splitter = $("splitter");
+const mainEl = $("main");
+let dragging = false;
+splitter.addEventListener("mousedown",e=>{ dragging=true; splitter.classList.add("dragging"); document.body.style.cursor="col-resize"; e.preventDefault(); });
+document.addEventListener("mousemove",e=>{
+  if(!dragging) return;
+  const rect = mainEl.getBoundingClientRect();
+  let r = (e.clientX - rect.left) / rect.width;
+  r = Math.max(0.15, Math.min(0.85, r));
+  S.splitRatio = r;
+  applySplit();
+});
+document.addEventListener("mouseup",()=>{
+  if(dragging){ dragging=false; splitter.classList.remove("dragging"); document.body.style.cursor=""; save(); }
+});
+function applySplit(){
+  if(S.editorOnly){ $("editorWrap").style.flex="1 1 100%"; $("previewWrap").style.display="none"; splitter.style.display="none"; return; }
+  if(S.previewOnly){ $("previewWrap").style.flex="1 1 100%"; $("editorWrap").style.display="none"; splitter.style.display="none"; return; }
+  $("editorWrap").style.display=""; $("previewWrap").style.display="";
+  splitter.style.display="";
+  $("editorWrap").style.flex = `${S.splitRatio} 1 0`;
+  $("previewWrap").style.flex = `${1-S.splitRatio} 1 0`;
+}
+function toggleEditorOnly(){ S.editorOnly=!S.editorOnly; if(S.editorOnly) S.previewOnly=false; applySplit(); save(); }
+function togglePreviewOnly(){ S.previewOnly=!S.previewOnly; if(S.previewOnly) S.editorOnly=false; applySplit(); save(); }
+
+/* ============ Outline toggle ============ */
+function toggleOutline(){
+  S.outlineOpen = !S.outlineOpen;
+  $("outline").classList.toggle("collapsed", !S.outlineOpen);
+  save();
+}
+
+/* ============ Focus mode ============ */
+function toggleFocus(){
+  S.focusMode = !S.focusMode;
+  document.body.classList.toggle("focus", S.focusMode);
+  save();
+}
+
+/* ============ Font ============ */
+function toggleFont(){
+  S.fontMono = !S.fontMono;
+  editor.style.fontFamily = S.fontMono
+    ? '"JetBrains Mono","Fira Code","SF Mono",Consolas,monospace'
+    : '-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+  save();
+}
+
+/* ============ Find / Replace ============ */
+let findMatches = [], findIdx = 0;
+function openFind(){
+  $("findBar").classList.add("show");
+  $("findInput").focus();
+  $("findInput").select();
+}
+function closeFind(){ $("findBar").classList.remove("show"); }
+function toggleReplace(show){ $("replaceRow").style.display = show ? "flex" : "none"; }
+function doFind(){
+  const q = $("findInput").value;
+  if(!q){ findMatches=[]; $("findCount").textContent="0 个结果"; return; }
+  const text = editor.value;
+  const regex = $("findRegex").checked;
+  const caseSens = $("findCase").checked;
+  findMatches = [];
+  try {
+    if(regex){
+      const flags = caseSens ? "g" : "gi";
+      const re = new RegExp(q, flags);
+      let m;
+      while((m=re.exec(text))!==null){ findMatches.push([m.index,m.index+m[0].length]); if(m[0].length===0) re.lastIndex++; }
+    } else {
+      let from=0;
+      while(true){
+        const idx = caseSens ? text.indexOf(q,from) : text.toLowerCase().indexOf(q.toLowerCase(),from);
+        if(idx===-1) break;
+        findMatches.push([idx,idx+q.length]);
+        from = idx+q.length;
+      }
+    }
+  } catch(e){ findMatches=[]; }
+  findIdx = 0;
+  $("findCount").textContent = findMatches.length+" 个结果";
+  highlightFind();
+}
+function highlightFind(){
+  if(findMatches.length===0) return;
+  const [s,e] = findMatches[findIdx];
+  editor.focus();
+  editor.setSelectionRange(s,e);
+  // scroll into view
+  const lineHeight = parseFloat(getComputedStyle(editor).lineHeight);
+  const line = editor.value.substring(0,s).split("\n").length;
+  editor.scrollTop = (line-3) * lineHeight;
+}
+function findNext(){
+  if(findMatches.length===0) return doFind();
+  findIdx = (findIdx+1) % findMatches.length;
+  highlightFind();
+}
+function replaceOne(){
+  if(findMatches.length===0) return;
+  const [s,e] = findMatches[findIdx];
+  const rep = $("replaceInput").value;
+  editor.value = editor.value.substring(0,s) + rep + editor.value.substring(e);
+  render();
+  doFind();
+}
+function replaceAll(){
+  const q = $("findInput").value;
+  const rep = $("replaceInput").value;
+  if(!q) return;
+  const regex = $("findRegex").checked;
+  const caseSens = $("findCase").checked;
+  try {
+    if(regex){
+      const flags = caseSens ? "g" : "gi";
+      editor.value = editor.value.replace(new RegExp(q,flags), rep);
+    } else {
+      const flags = caseSens ? "g" : "gi";
+      editor.value = editor.value.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),flags), rep);
+    }
+  } catch(e){}
+  render();
+  doFind();
+  save();
+}
+$("findInput").addEventListener("input",doFind);
+
+/* ============ Import / Export ============ */
+function exportMd(){
+  const blob = new Blob([editor.value],{type:"text/markdown"});
+  download(blob,"速记.md");
+}
+function exportHtml(){
+  const t = THEMES[S.theme];
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>速记导出</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/${S.dark?'github-dark':'github'}.min.css">
+<style>body{font-family:-apple-system,"PingFang SC",sans-serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.7;color:${S.dark?'#e8e8f0':'#2b2b3a'};background:${S.dark?'#1e1f2a':'#fff8f3'}}
+a{color:${t.accent}}blockquote{border-left:4px solid ${t.accent};padding:.4em 1em;background:${t.soft};border-radius:0 8px 8px 0;margin:.8em 0}
+code{background:${t.soft};padding:.15em .4em;border-radius:4px;font-family:monospace}
+pre{border-radius:10px;overflow:hidden}pre code{background:transparent;padding:0}
+table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:7px 12px}th{background:${t.soft}}
+hr{border:none;border-top:2px dashed #ccc;margin:1.5em 0}img{max-width:100%;border-radius:10px}
+h1{border-bottom:2px solid ${t.soft};padding-bottom:.2em}h2{border-bottom:1px solid #ccc;padding-bottom:.2em}
+</style></head><body>${preview.innerHTML}</body></html>`;
+  download(new Blob([html],{type:"text/html"}),"速记.html");
+}
+function exportPdf(){ window.print(); }
+function importMd(){
+  const input = document.createElement("input");
+  input.type="file"; input.accept=".md,.markdown,text/markdown";
+  input.onchange = e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{ editor.value = reader.result; render(); save(); };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+function copyRich(){
+  const range = document.createRange();
+  range.selectNodeContents(preview);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  try { document.execCommand("copy"); } catch(e){}
+  sel.removeAllRanges();
+  flashStatus("已复制富文本到剪贴板");
+}
+function download(blob,name){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ============ Sample document ============ */
+const SAMPLE = `# 速记 Markdown 示例文档
+
+欢迎使用 **速记** 编辑器！这是一份涵盖所有支持语法的示例文档。
+
+## 文本样式
+
+- **粗体文本**
+- *斜体文本*
+- ~~删除线文本~~
+- ***粗斜体***
+- \`行内代码\`
+
+## 链接与图片
+
+这是一个 [链接示例](https://example.com)。
+
+![图片描述](https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg?auto=compress&cs=tinysrgb&w=600)
+
+## 列表
+
+### 无序列表
+- 苹果
+  - 红富士
+  - 嘎啦果
+- 香蕉
+- 橙子
+
+### 有序列表
+1. 第一步
+2. 第二步
+3. 第三步
+
+### 任务列表
+- [x] 已完成的任务
+- [ ] 待办任务
+- [ ] 另一个待办
+
+## 引用块
+
+> 这是一段引用。
+>
+> 引用可以包含多行，也可以包含 **格式** 和 \`代码\`。
+
+## 代码块
+
+\`\`\`javascript
+function greet(name) {
+  console.log(\`Hello, \${name}!\`);
+  return true;
+}
+\`\`\`
+
+\`\`\`python
+def fibonacci(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+\`\`\`
+
+## 表格
+
+| 功能 | 快捷键 | 说明 |
+| --- | --- | --- |
+| 粗体 | Ctrl+B | 加粗文本 |
+| 斜体 | Ctrl+I | 倾斜文本 |
+| 链接 | Ctrl+K | 插入链接 |
+
+## 分隔线
+
+---
+
+## 脚注
+
+这里有一个脚注引用[^1]，还有另一个[^note]。
+
+[^1]: 这是第一个脚注的内容。
+[^note]: 这是一个带标签的脚注。
+
+## 结语
+
+尽情享受写作吧！按 **?** 查看所有快捷键。
+`;
+function loadSample(){
+  if(editor.value.trim() && !confirm("加载示例将覆盖当前内容，是否继续？")) return;
+  editor.value = SAMPLE;
+  render();
+  save();
+  flashStatus("已加载示例文档");
+}
+
+/* ============ Help modal ============ */
+const SHORTCUTS = [
+  ["粗体","Ctrl+B"],["斜体","Ctrl+I"],["链接","Ctrl+K"],["引用","Ctrl+Q"],
+  ["标题1-6","Ctrl+1~6"],["查找","Ctrl+F"],["替换","Ctrl+H"],
+  ["撤销","Ctrl+Z"],["重做","Ctrl+Y"],["大纲","Ctrl+O"],
+  ["专注模式","F11"],["快捷键面板","?"],["加载示例","无"],["保存","Ctrl+S"],
+];
+function showHelp(){
+  $("shortcutList").innerHTML = SHORTCUTS.map(s=>
+    `<div class="shortcut-item"><span>${s[0]}</span><kbd>${s[1]}</kbd></div>`
+  ).join("");
+  $("helpModal").classList.add("show");
+}
+function closeHelp(){ $("helpModal").classList.remove("show"); }
+$("helpModal").addEventListener("click",e=>{ if(e.target===$("helpModal")) closeHelp(); });
+
+/* ============ Persistence ============ */
+const KEY = "suji-editor-state";
+function save(){
+  S.content = editor.value;
+  localStorage.setItem(KEY, JSON.stringify(S));
+  $("autoSaveLabel").textContent = "自动保存: 已保存";
+}
+function saveNow(){
+  save();
+  flashStatus("已手动保存");
+}
+let autoSaveTimer;
+function startAutoSave(){
+  autoSaveTimer = setInterval(()=>{ save(); }, 30000);
+}
+function load(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const s = JSON.parse(raw);
+      Object.assign(S,s);
+    }
+  } catch(e){}
+  editor.value = S.content || "";
+  $("fontSize").value = S.fontSize;
+  editor.style.fontSize = S.fontSize+"px";
+  applyTheme();
+  applySplit();
+  toggleFont(); toggleFont(); // apply once
+  if(!S.fontMono) toggleFont();
+  if(S.fontMono) editor.style.fontFamily = '"JetBrains Mono","Fira Code","SF Mono",Consolas,monospace';
+  else editor.style.fontFamily = '-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+  editor.style.fontSize = S.fontSize+"px";
+  $("outline").classList.toggle("collapsed", !S.outlineOpen);
+  if(S.focusMode) document.body.classList.add("focus");
+  $("syncScrollToggle").textContent = "同步滚动: "+(S.syncScroll?"开":"关");
+  $("syncLabel").textContent = "同步滚动: "+(S.syncScroll?"开":"关");
+  render();
+}
+function flashStatus(msg){
+  const el = $("autoSaveLabel");
+  const old = el.textContent;
+  el.textContent = msg;
+  setTimeout(()=>{ el.textContent = "自动保存: 已保存"; }, 2000);
+}
+
+/* ============ Editor events ============ */
+editor.addEventListener("input",()=>{ render(); $("autoSaveLabel").textContent="自动保存: 编辑中..."; });
+editor.addEventListener("keyup",updateCursorPos);
+editor.addEventListener("click",updateCursorPos);
+editor.addEventListener("keydown",handleKeydown);
+editor.addEventListener("dragover",e=>e.preventDefault());
+editor.addEventListener("drop",handleDrop);
+
+function handleKeydown(e){
+  const ctrl = e.ctrlKey || e.metaKey;
+  if(ctrl && !e.shiftKey){
+    const k = e.key.toLowerCase();
+    if(k==='b'){ e.preventDefault(); applyFormat("bold"); return; }
+    if(k==='i'){ e.preventDefault(); applyFormat("italic"); return; }
+    if(k==='k'){ e.preventDefault(); applyFormat("link"); return; }
+    if(k==='q'){ e.preventDefault(); applyFormat("quote"); return; }
+    if(k==='f'){ e.preventDefault(); openFind(); return; }
+    if(k==='h'){ e.preventDefault(); openFind(); toggleReplace(true); return; }
+    if(k==='z'){ e.preventDefault(); document.execCommand("undo"); return; }
+    if(k==='y'){ e.preventDefault(); document.execCommand("redo"); return; }
+    if(k==='s'){ e.preventDefault(); saveNow(); return; }
+    if(k==='o'){ e.preventDefault(); toggleOutline(); return; }
+    if(k>='1'&&k<='6'){ e.preventDefault(); applyFormat("h"+k); return; }
+  }
+  if(ctrl && e.shiftKey){
+    const k = e.key;
+    if(k==='7'){ e.preventDefault(); applyFormat("ol"); return; }
+    if(k==='8'){ e.preventDefault(); applyFormat("ul"); return; }
+    if(k==='9'){ e.preventDefault(); applyFormat("task"); return; }
+  }
+  // Tab / Shift+Tab
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s = editor.selectionStart, en = editor.selectionEnd;
+    if(e.shiftKey){
+      // remove indent
+      const lineStart = editor.value.lastIndexOf("\n",s-1)+1;
+      const line = editor.value.substring(lineStart, en);
+      const removed = line.replace(/^ {1,2}/,"");
+      editor.value = editor.value.substring(0,lineStart)+removed+editor.value.substring(en);
+      editor.selectionStart = lineStart;
+      editor.selectionEnd = lineStart+removed.length;
+    } else {
+      editor.value = editor.value.substring(0,s)+"  "+editor.value.substring(en);
+      editor.selectionStart = editor.selectionEnd = s+2;
+    }
+    render();
+  }
+}
+
+function handleDrop(e){
+  e.preventDefault();
+  const files = e.dataTransfer.files;
+  if(!files || !files.length) return;
+  for(const file of files){
+    if(!file.type.startsWith("image/")) continue;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const data = reader.result;
+      const md = `![${file.name}](${data})`;
+      const pos = editor.selectionStart;
+      editor.value = editor.value.substring(0,pos)+"\n"+md+"\n"+editor.value.substring(pos);
+      render();
+      save();
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+/* ============ Global keys ============ */
+document.addEventListener("keydown",e=>{
+  if(e.key==='Escape'){ closeFind(); closeHelp(); }
+  if(e.key==='?' && e.target!==editor && e.target.tagName!=='INPUT' && e.target.tagName!=='TEXTAREA'){
+    showHelp();
+  }
+  if(e.key==='F11'){ e.preventDefault(); toggleFocus(); }
+});
+
+/* ============ Theme select ============ */
+const themeSelect = $("themeSelect");
+themeSelect.innerHTML = Object.entries(THEMES).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join("");
+themeSelect.onchange = ()=>{ S.theme = themeSelect.value; applyTheme(); save(); };
+$("fontSize").onchange = ()=>{ S.fontSize = parseInt($("fontSize").value); editor.style.fontSize = S.fontSize+"px"; preview.style.fontSize = S.fontSize+"px"; save(); };
+
+/* ============ Init ============ */
+load();
+startAutoSave();
+window.addEventListener("load",()=>{
+  setTimeout(()=>{ $("loader").classList.add("hide"); document.body.classList.add("fade-in"); }, 600);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# WorkBuddy agent memory (private)
+.workbuddy/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# Test artifacts
+test-*.png
+test-*.html
+*-test.png

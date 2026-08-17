@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="card" data-color="peach">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./cat-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>惜时</title>
+    <script type="module" crossorigin src="./assets/index-BD0o7qzH.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CDLscvon.css">
+  </head>
+  <body>
+    <!-- Fixed top-right controls -->
+    <div class="fixed-top-right">
+      <div class="mode-switch" id="modeSwitch" title="切换正计时/倒计时">
+        <span class="mode-label mode-label-left">倒计时</span>
+        <label class="toggle-pill">
+          <input type="checkbox" id="modeToggle" />
+          <span class="pill-track"><span class="pill-thumb"></span></span>
+        </label>
+        <span class="mode-label mode-label-right">正计时</span>
+      </div>
+      <button class="settings-gear" id="settingsGear" title="设置" aria-label="打开设置">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68 1.65 1.65 0 0 0 10 3.17V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Settings Drawer -->
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <aside class="settings-drawer" id="settingsDrawer">
+      <div class="drawer-header">
+        <h2>设置</h2>
+        <button class="drawer-close" id="drawerClose">×</button>
+      </div>
+      <div class="drawer-body">
+        <div class="setting-group">
+          <div class="setting-group-title">计时</div>
+          <div class="setting-row">
+            <label>工作时长（分钟）</label>
+            <input type="number" class="setting-input" id="workInput" min="1" max="180" value="25" />
+          </div>
+          <div class="setting-row">
+            <label>短休息（分钟）</label>
+            <input type="number" class="setting-input" id="shortBreakInput" min="1" max="60" value="5" />
+          </div>
+          <div class="setting-row">
+            <label>长休息（分钟）</label>
+            <input type="number" class="setting-input" id="longBreakInput" min="1" max="60" value="15" />
+          </div>
+          <div class="setting-row">
+            <label>长休息间隔（个）</label>
+            <input type="number" class="setting-input" id="intervalInput" min="2" max="10" value="4" />
+          </div>
+          <div class="setting-row toggle-row">
+            <label>自动开始休息</label>
+            <label class="switch"><input type="checkbox" id="autoBreakToggle" checked /><span class="slider"></span></label>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>自动开始工作</label>
+            <label class="switch"><input type="checkbox" id="autoWorkToggle" /><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-title">提醒</div>
+          <div class="setting-row">
+            <label>提示音</label>
+            <select class="setting-input setting-select" id="soundSelect">
+              <option value="ding">叮声</option>
+              <option value="alarm">闹钟声</option>
+              <option value="chime">风铃声</option>
+            </select>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>音效提醒</label>
+            <label class="switch"><input type="checkbox" id="soundToggle" checked /><span class="slider"></span></label>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>系统通知（最高级别）</label>
+            <label class="switch"><input type="checkbox" id="notifToggle" checked /><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-title">外观</div>
+          <div class="setting-row">
+            <label>风格</label>
+            <div class="style-picker">
+              <button class="style-btn active" data-style="card">卡片</button>
+              <button class="style-btn" data-style="minimal">极简</button>
+              <button class="style-btn" data-style="glass">毛玻璃</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <label>配色</label>
+            <div class="color-picker" id="colorPicker">
+              <button class="color-dot active" data-color="peach" style="--dot:linear-gradient(135deg,#FFD4B8,#FFAB8A)"></button>
+              <button class="color-dot" data-color="mint" style="--dot:linear-gradient(135deg,#C8F0E0,#8AD8B8)"></button>
+              <button class="color-dot" data-color="sakura" style="--dot:linear-gradient(135deg,#FFE0EC,#FFC0D8)"></button>
+              <button class="color-dot" data-color="lemon" style="--dot:linear-gradient(135deg,#FFF0C8,#FFE090)"></button>
+              <button class="color-dot" data-color="sky" style="--dot:linear-gradient(135deg,#C8E4FF,#90CCFF)"></button>
+              <button class="color-dot" data-color="rose" style="--dot:linear-gradient(135deg,#FFC8D5,#FF9AB0)"></button>
+              <button class="color-dot" data-color="matcha" style="--dot:linear-gradient(135deg,#D5F0C8,#A8E098)"></button>
+              <button class="color-dot" data-color="coral" style="--dot:linear-gradient(135deg,#FFD0B8,#FFA880)"></button>
+              <button class="color-dot" data-color="cafe" style="--dot:linear-gradient(135deg,#E8D8C8,#D0B8A0)"></button>
+              <button class="color-dot" data-color="berry" style="--dot:linear-gradient(135deg,#F0C0D0,#E098B0)"></button>
+            </div>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>番茄印花</label>
+            <label class="switch"><input type="checkbox" id="patternToggle" checked /><span class="slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <label>字体</label>
+            <select class="setting-input setting-select" id="fontSelect">
+              <option value="system">系统默认</option>
+              <option value="serif">宋体/衬线</option>
+              <option value="rounded">圆体</option>
+              <option value="mono">等宽字体</option>
+              <option value="kai">楷体</option>
+              <option value="hei">黑体</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <label>文字颜色</label>
+            <div class="text-color-ctrl">
+              <button class="style-btn active" id="autoColorBtn" data-mode="auto">自动反差</button>
+              <button class="style-btn" id="customColorBtn" data-mode="custom">自定义</button>
+              <input type="color" class="color-wheel" id="textColorWheel" value="#3A2E26" />
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-title">勋章配置</div>
+          <div class="setting-row">
+            <label>导出勋章配置</label>
+            <button class="style-btn" id="exportMedalsBtn">导出JSON</button>
+          </div>
+          <div class="setting-row">
+            <label>导入勋章配置</label>
+            <button class="style-btn" id="importMedalsBtn">导入JSON</button>
+          </div>
+          <input type="file" id="medalFileInput" accept=".json" style="display:none" />
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="app">
+      <header class="app-header">
+        <h1 class="app-title">惜时</h1>
+      </header>
+
+      <div class="main-layout">
+        <!-- Left: Medal Wall -->
+        <section class="medal-section" id="medalSection">
+          <h3 class="section-title">荣誉勋章</h3>
+          <div class="medal-wall" id="medalWall"></div>
+          <button class="btn-all-medals" id="showAllMedalsBtn">查看全部勋章</button>
+        </section>
+
+        <!-- Center: Timer -->
+        <section class="timer-section">
+          <div class="timer-display">
+            <div class="progress-ring-wrapper">
+              <svg class="progress-ring" viewBox="0 0 280 280">
+                <circle class="progress-ring-bg" cx="140" cy="140" r="130" />
+                <circle class="progress-ring-fg" cx="140" cy="140" r="130" id="progressRing" />
+              </svg>
+              <div class="time-content">
+                <div class="time-text" id="timeText">25:00</div>
+                <div class="phase-label" id="phaseLabel">工作时间</div>
+                <div class="task-label" id="taskLabel"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="btn btn-primary" id="startPauseBtn">开始</button>
+            <button class="btn btn-secondary" id="resetBtn">重置</button>
+            <button class="btn btn-secondary" id="skipBtn">跳过</button>
+          </div>
+
+          <div class="task-section">
+            <div class="task-input-wrapper">
+              <input type="text" class="task-input" id="taskInput" placeholder="给这个番茄起个名字…" maxlength="40" />
+              <button class="btn-icon" id="clearTaskBtn" title="清除">×</button>
+            </div>
+          </div>
+
+          <div class="today-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="todayCount">0</span>
+              <span class="stat-label">今日番茄</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="todayMinutes">0</span>
+              <span class="stat-label">专注分钟</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="cycleCount">0</span>
+              <span class="stat-label">当前轮次</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: Cycle Progress -->
+        <section class="cycle-section">
+          <h3 class="cycle-title">循环进程</h3>
+          <div class="cycle-visual" id="cycleVisual"></div>
+          <div class="cycle-info">
+            <span id="cyclePhaseInfo">第 1 个番茄 · 工作</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- Calendar -->
+      <section class="calendar-section" id="calendarSection">
+        <div class="cal-layout">
+          <div class="cal-left">
+            <div class="cal-title-row">
+              <h3 class="section-title">专注日历</h3>
+              <button class="cal-today-btn" id="calTodayBtn">回到今日</button>
+            </div>
+            <div class="calendar-nav">
+              <button class="cal-nav-btn" id="calPrev">‹</button>
+              <span class="cal-month-label" id="calMonthLabel"></span>
+              <button class="cal-nav-btn" id="calNext">›</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="cal-detail" id="calDetail"></div>
+          </div>
+          <div class="cal-right">
+            <h3 class="section-title">今日记录</h3>
+            <div class="cal-today-list" id="calTodayList"></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="keyboard-hints">
+        <span><kbd>空格</kbd> 开始/暂停</span>
+        <span><kbd>R</kbd> 重置</span>
+        <span><kbd>T</kbd> 切换模式</span>
+      </footer>
+    </div>
+
+    <!-- Medal Toast -->
+    <div class="medal-toast" id="medalToast">
+      <div class="medal-toast-icon" id="medalToastIcon"></div>
+      <div class="medal-toast-text">
+        <div class="medal-toast-title" id="medalToastTitle"></div>
+        <div class="medal-toast-praise" id="medalToastPraise"></div>
+      </div>
+    </div>
+
+  </body>
+</html>
