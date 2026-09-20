@@ -3,269 +3,446 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mariana · 个人工具箱</title>
-  <meta name="description" content="Mariana 的个人网站 —— 独立开发的小工具、作品集与成长记录。" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0e14'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%232dd4bf' font-family='monospace'%3EM%3C/text%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="css/style.css?v=7" />
+  <title>Mariana · 游戏开发 × 全栈作品集</title>
+  <meta name="description" content="Mariana 的个人网站 —— Unity / VR / 桌面游戏作品，与 10+ 独立开发的全栈工具，全部真实可体验。" />
+  <!-- ══ 分享/SEO 元信息 ══
+       ★ 部署后把下面 4 处 https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link
+         换成你的正式域名（Vercel 域名或自定义域名），共 og:url / og:image / canonical / JSON-LD -->
+  <link rel="canonical" href="https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="mariana.dev" />
+  <meta property="og:title" content="Mariana · 游戏开发 × 全栈作品集" />
+  <meta property="og:description" content="Unity / VR / 桌面游戏作品，与 10+ 独立开发的全栈工具 —— 从想法到上线，全流程一人闭环。" />
+  <meta property="og:url" content="https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link/" />
+  <meta property="og:image" content="https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Mariana 个人作品集 —— 用代码，把想法变成能用的东西" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mariana · 游戏开发 × 全栈作品集" />
+  <meta name="twitter:description" content="Unity / VR / 桌面游戏作品，与 10+ 独立开发的全栈工具 —— 从想法到上线，全流程一人闭环。" />
+  <meta name="twitter:image" content="https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link/og-image.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "name": "Mariana",
+      "jobTitle": "游戏开发 × 全栈",
+      "description": "Unity / VR / 桌面游戏开发，独立完成 10+ 全栈工具与应用",
+      "url": "https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link/",
+      "sameAs": [
+        "https://github.com/MarianaBunnyJump",
+        "https://blog.csdn.net/weixin_71572744"
+      ],
+      "knowsAbout": ["Unity", "C#", "XR Development", "JavaScript", "TypeScript", "Python", "FastAPI", "Node.js", "ComfyUI"]
+    }
+  }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232B6DE8'/%3E%3Cstop offset='1' stop-color='%231443C4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='800'%3EM%3C/text%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2b6de8" />
+  <!-- 字体：preconnect 提前建连 + 异步加载（不阻塞首屏渲染），noscript 降级为同步 -->
+  <link rel="preconnect" href="https://miaoda.feishu.cn" crossorigin />
+  <link rel="dns-prefetch" href="https://miaoda.feishu.cn" />
+  <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Unbounded:wght@400;600;800&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Unbounded:wght@400;600;800&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+  <script>
+    /* 皮肤预应用：在样式渲染前读取本地设置，避免切换时闪烁 */
+    (function () {
+      try {
+        var s = JSON.parse(localStorage.getItem("mariana-site-settings") || "{}");
+        var root = document.documentElement;
+        var theme = s.theme === "dark" || s.theme === "light" ? s.theme : "ocean";
+        root.setAttribute("data-theme", theme);
+        var accents = ["sea", "teal", "blue", "violet", "rose", "amber", "green"];
+        root.setAttribute("data-accent", accents.indexOf(s.accent) !== -1 ? s.accent : "sea");
+        if (s.noGrid) root.classList.add("no-grid");
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css?v=13" />
 </head>
 <body>
+  <!-- 无障碍：键盘用户跳过导航直达内容 -->
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- 等深线渐变定义（全站共用） -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="cg" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2B6DE8" stop-opacity=".5"/>
+        <stop offset="1" stop-color="#0A1E3C" stop-opacity=".28"/>
+      </linearGradient>
+    </defs>
+  </svg>
 
   <!-- 顶部导航 -->
   <header class="nav">
     <div class="nav-inner">
-      <a href="#home" class="logo" data-nav>
-        <span class="logo-mark">&lt;M/&gt;</span>
-        <span class="logo-text">mariana<span class="logo-dot">.</span>dev</span>
-      </a>
+      <a href="/" class="logo" data-nav><i></i><span>mariana.dev</span></a>
       <nav class="nav-links" id="navLinks">
-        <a href="#home" class="nav-link" data-nav data-page="home">首页</a>
-        <a href="#tools" class="nav-link" data-nav data-page="tools">工具箱</a>
-        <a href="#works" class="nav-link" data-nav data-page="works">作品</a>
-        <a href="#about" class="nav-link" data-nav data-page="about">关于</a>
+        <a href="/" class="nav-link" data-nav data-page="home">首页</a>
+        <a href="/games" class="nav-link" data-nav data-page="games">游戏作品</a>
+        <a href="/tools" class="nav-link" data-nav data-page="tools">日常工具</a>
+        <a href="/about" class="nav-link" data-nav data-page="about">关于</a>
       </nav>
-      <a href="#tools" class="btn btn-primary btn-sm nav-cta" data-nav>打开工具箱</a>
-      <button class="nav-burger" id="navBurger" aria-label="菜单" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="nav-actions">
+        <a href="/tools" class="btn btn-primary btn-sm nav-cta" data-nav>打开工具箱</a>
+        <button class="nav-icon-btn" id="navSearch" aria-label="快速导航 (Ctrl+K)" title="快速导航 (Ctrl+K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="nav-icon-btn" id="navSettings" aria-label="网站设置" title="网站设置" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="nav-burger" id="navBurger" aria-label="菜单" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+      <!-- 外观设置面板 -->
+      <div class="settings-pop" id="settingsPop" hidden>
+        <div class="settings-title">外观设置</div>
+        <div class="settings-group">
+          <span class="settings-label">皮肤</span>
+          <div class="seg" id="themeSeg">
+            <button type="button" class="seg-btn" data-set-theme="ocean">深海</button>
+            <button type="button" class="seg-btn" data-set-theme="dark">暗夜</button>
+            <button type="button" class="seg-btn" data-set-theme="light">浅色</button>
+          </div>
+        </div>
+        <div class="settings-group">
+          <span class="settings-label">主题色</span>
+          <div class="swatches">
+            <button type="button" class="swatch" data-set-accent="sea"    style="--c:#2b6de8" title="海洋蓝"></button>
+            <button type="button" class="swatch" data-set-accent="teal"   style="--c:#14b8a6" title="薄荷绿"></button>
+            <button type="button" class="swatch" data-set-accent="blue"   style="--c:#0ea5e9" title="天空蓝"></button>
+            <button type="button" class="swatch" data-set-accent="violet" style="--c:#8b5cf6" title="星紫"></button>
+            <button type="button" class="swatch" data-set-accent="rose"   style="--c:#f43f5e" title="蔷薇粉"></button>
+            <button type="button" class="swatch" data-set-accent="amber"  style="--c:#d97706" title="落日橙"></button>
+            <button type="button" class="swatch" data-set-accent="green"  style="--c:#16a34a" title="青草绿"></button>
+          </div>
+        </div>
+        <div class="settings-group settings-row grid-row">
+          <span class="settings-label">背景网格</span>
+          <button type="button" class="switch" id="gridSwitch" role="switch" aria-checked="true" aria-label="背景网格"><i></i></button>
+        </div>
+        <div class="settings-group settings-row">
+          <span class="settings-label">编辑模式</span>
+          <button type="button" class="switch" id="editSwitch" role="switch" aria-checked="false" aria-label="编辑模式"><i></i></button>
+        </div>
+        <button type="button" class="settings-reset" id="settingsReset">恢复默认</button>
+      </div>
     </div>
   </header>
 
-  <main class="main">
+  <main class="main" id="main">
 
     <!-- ========== 首页 ========== -->
     <section class="page active" id="page-home">
-      <div class="hero">
-        <p class="hero-tag"><span class="tag-code">//</span> GAME DEV · TOOL MAKER · LIFELONG LEARNER</p>
-        <h1 class="hero-title">
-          用代码，把想法<br />
-          <span class="grad">变成能用的东西</span>
-        </h1>
-        <p class="hero-sub">
-          我是 Mariana，一名 Unity 程序员。这里放着我自己写的小工具、做过的项目，
-          还有一路折腾的记录 —— Markdown 编辑器、随机转盘、番茄钟、待办清单，随便用。
-        </p>
-        <div class="hero-actions">
-          <a href="#works" class="btn btn-primary" data-nav>看看我的作品</a>
-          <a href="#tools" class="btn btn-ghost" data-nav>打开工具箱 <span class="arrow">→</span></a>
+      <div class="hero-band">
+        <svg class="contours" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <path d="M-40 120 C180 70 340 160 560 110 S940 60 1240 110"/>
+          <path d="M-40 210 C200 160 360 260 580 200 S960 140 1240 200"/>
+          <path d="M-40 300 C220 250 380 360 600 290 S980 230 1240 290"/>
+          <path d="M-40 390 C240 340 400 460 620 380 S1000 320 1240 380"/>
+          <path d="M-40 480 C260 430 420 560 640 470 S1020 410 1240 470"/>
+        </svg>
+        <div class="main hero-inner">
+          <div>
+            <p class="kicker">OPEN TO WORK · PORTFOLIO · TOOLBOX</p>
+            <h1 class="hero-title">用代码，把想法<br /><span class="grad">变成能用的东西</span></h1>
+            <p class="hero-sub">
+              我是 Mariana，一名 Unity 程序员，也喜欢折腾 Web 全栈。
+              这里放着我的游戏作品、自研工具，以及一路踩坑的记录 —— 随便看，随便用。
+            </p>
+            <div class="hero-actions">
+              <a href="/games" class="btn btn-primary" data-nav>看看我的游戏作品</a>
+              <a href="/tools" class="btn btn-ghost" data-nav>打开工具箱 <span class="arrow">→</span></a>
+            </div>
+            <div class="hero-tags">
+              <span class="tag-pill hot">求职中 · Open to Work</span>
+              <span class="tag-pill">Unity / C#</span>
+              <span class="tag-pill">XR / VR</span>
+              <span class="tag-pill">Web 全栈</span>
+              <span class="tag-pill">AI 工作流</span>
+            </div>
+          </div>
+          <div class="iso" aria-hidden="true">
+            <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="ring r4"></div>
+            <div class="core">M</div>
+            <span class="tag t1">Unity / C#</span>
+            <span class="tag t2">XR / VR</span>
+            <span class="tag t3">Web 全栈</span>
+            <span class="depth">DEPTH · 0 M</span>
+          </div>
         </div>
-        <div class="hero-stats">
-          <div class="stat"><span class="stat-num" id="statTools">4</span><span class="stat-label">在线工具</span></div>
-          <div class="stat"><span class="stat-num" id="statWorks">5</span><span class="stat-label">代表作品</span></div>
-          <div class="stat"><span class="stat-num" id="statLangs">4</span><span class="stat-label">常用语言</span></div>
+        <div class="main">
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-num">10</span><span class="stat-label">自研工具 &amp; 应用</span></div>
+            <div class="stat"><span class="stat-num">4</span><span class="stat-label">游戏作品</span></div>
+            <div class="stat"><span class="stat-num">6</span><span class="stat-label">覆盖平台</span></div>
+          </div>
         </div>
       </div>
 
-      <!-- 工具快速入口 -->
+      <!-- 我能带来什么 -->
       <div class="section">
-        <div class="section-head">
-          <h2 class="section-title"><span class="section-no">01</span> 工具箱</h2>
-          <a href="#tools" class="text-link" data-nav>全部工具 →</a>
+        <div class="sec-head">
+          <div>
+            <div class="sec-label">01 · Capabilities</div>
+            <h2 class="sec-title">我能带来什么</h2>
+          </div>
         </div>
-        <div class="tool-grid home-tools">
-          <a href="#tools" class="tool-card" data-nav data-open-tool="markdown">
-            <div class="tool-card-icon icon-memo">📝</div>
-            <div class="tool-card-body">
-              <h3>Markdown 编辑器</h3>
-              <p>实时预览的 Markdown 编辑器，写文档利器。</p>
-            </div>
-            <span class="tool-card-arrow">→</span>
-          </a>
-          <a href="#tools" class="tool-card" data-nav data-open-tool="wheel">
-            <div class="tool-card-icon icon-wheel">🎯</div>
-            <div class="tool-card-body">
-              <h3>随机转盘</h3>
-              <p>选择困难症救星，今天吃什么由它说了算。</p>
-            </div>
-            <span class="tool-card-arrow">→</span>
-          </a>
-          <a href="#tools" class="tool-card" data-nav data-open-tool="pomodoro">
-            <div class="tool-card-icon icon-pomodoro">🍅</div>
-            <div class="tool-card-body">
-              <h3>惜时 · 番茄钟</h3>
-              <p>我亲手做的专注计时器，带勋章和专注日历。</p>
-            </div>
-            <span class="tool-card-arrow">→</span>
-          </a>
-          <a href="#tools" class="tool-card" data-nav data-open-tool="todo">
-            <div class="tool-card-icon icon-soon">✓</div>
-            <div class="tool-card-body">
-              <h3>待办清单</h3>
-              <p>任务管理小工具，勾选完成，清清爽爽。</p>
-            </div>
-            <span class="tool-card-arrow">→</span>
-          </a>
+        <div class="value-grid rv">
+          <div class="value-card">
+            <div class="value-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg></div>
+            <h3>从 0 到 1 的交付力</h3>
+            <p>需求、设计、开发、部署独立闭环。本站与站内全部工具均由我一人完成，每一个都真实可用，不是 Demo 堆砌。</p>
+            <span class="dep">DEPTH −1200M</span>
+          </div>
+          <div class="value-card">
+            <div class="value-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+            <h3>跨端开发能力</h3>
+            <p>Unity / VR / Windows 桌面 / 微信小程序 / Android / Web 全栈 —— 用合适的技术，在合适的平台做合适的东西。</p>
+            <span class="dep">DEPTH −4200M</span>
+          </div>
+          <div class="value-card">
+            <div class="value-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+            <h3>AI 工程落地</h3>
+            <p>LangGraph 智能体、ComfyUI 工作流、FastAPI / Node 全栈，能把 AI 能力真正做成能用、好用的产品。</p>
+            <span class="dep">DEPTH −6800M</span>
+          </div>
         </div>
       </div>
 
-      <!-- 精选作品 -->
+      <!-- 优选作品 -->
       <div class="section">
-        <div class="section-head">
-          <h2 class="section-title"><span class="section-no">02</span> 精选作品</h2>
-          <a href="#works" class="text-link" data-nav>全部作品 →</a>
+        <div class="sec-head">
+          <div>
+            <div class="sec-label">02 · Selected Works</div>
+            <h2 class="sec-title">优选作品</h2>
+          </div>
+          <a href="/games" class="text-link" data-nav>全部游戏作品 →</a>
         </div>
-        <div class="works-featured">
-          <a href="#works" class="work-card work-featured" data-nav>
-            <div class="work-cover cover-pomodoro"><span class="work-cover-text">惜时</span></div>
+        <div class="works-list rv">
+          <a href="/tools" class="work-card" data-open-tool="pomodoro">
+            <div class="work-cover" style="--cover:var(--grad-sea)">惜时</div>
             <div class="work-info">
-              <span class="work-tag">Web 应用</span>
+              <span class="tag">WEB 应用 · 可在线体验</span>
               <h3>惜时 · 番茄钟</h3>
-              <p>从零手写的专注计时器：倒计时/正计时、10 套配色、勋章成就、专注日历。</p>
+              <p>从零手写的专注计时器：双模式计时、10 套配色、勋章成就、专注日历。点击即可在站内直接体验。</p>
               <span class="work-meta">HTML · CSS · Vanilla JS · Vite</span>
             </div>
           </a>
-          <a href="#works" class="work-card work-featured" data-nav>
-            <div class="work-cover cover-vr"><span class="work-cover-text">VR</span></div>
+          <article class="work-card">
+            <div class="work-cover" style="--cover:linear-gradient(128deg,#3B78F0,#0A1E3C)">CPU</div>
             <div class="work-info">
-              <span class="work-tag">Unity · XR</span>
-              <h3>Unity VR 交互项目</h3>
-              <p>基于 Timeline 与 XR Interaction Toolkit 的 VR 体验，集成 AVPro Video 视频播放。</p>
-              <span class="work-meta">Unity · C# · Timeline · XRI · AVPro</span>
+              <span class="tag">WINDOWS 桌面游戏</span>
+              <h3>CPU Racer</h3>
+              <p>基于 .NET 8 自研的 2D 竞速游戏：Box2D 物理驱动、任务管理器联动、游戏内 Overlay 与多语言本地化，已发布 v1.2.0。</p>
+              <span class="work-meta">C# · .NET 8 · Box2D · Vortice (DirectX)</span>
+            </div>
+          </article>
+          <a href="#" target="_blank" rel="noopener" class="work-card" data-ext-link="sentinel">
+            <div class="work-cover" style="--cover:linear-gradient(128deg,#6FA8FF,#1443C4)">哨兵</div>
+            <div class="work-info">
+              <span class="tag">全栈 · AI 应用</span>
+              <h3>哨兵站 · AI 资讯监控</h3>
+              <p>39 个数据源定时抓取 + AI 关键词监控 + WebSocket 实时推送，React 控制台，配套两个 Android 客户端。</p>
+              <span class="work-card-note" data-ext-note="sentinel" hidden></span>
+              <span class="work-meta">Node.js · Express · Socket.io · SQLite · React</span>
+            </div>
+          </a>
+          <a href="#" target="_blank" rel="noopener" class="work-card" data-ext-link="ppt">
+            <div class="work-cover" style="--cover:linear-gradient(128deg,#8FBEFF,#2B6DE8)">PPT</div>
+            <div class="work-info">
+              <span class="tag">全栈 · AI 应用</span>
+              <h3>AI PPT 工作台</h3>
+              <p>主题 / 文本 / PDF 一键生成完整 PPT：大纲编辑、并发逐页生成、在线编辑器，导出原生可编辑 PPTX。</p>
+              <span class="work-card-note" data-ext-note="ppt" hidden></span>
+              <span class="work-meta">FastAPI · LangGraph · React 19 · python-pptx</span>
             </div>
           </a>
         </div>
       </div>
 
-      <!-- 链接区 -->
+      <!-- 我在别处 -->
       <div class="section">
-        <div class="section-head">
-          <h2 class="section-title"><span class="section-no">03</span> 我在别处</h2>
+        <div class="sec-head">
+          <div>
+            <div class="sec-label">03 · Links</div>
+            <h2 class="sec-title">我在别处</h2>
+          </div>
         </div>
-        <div class="links-row">
-          <a class="link-card" id="linkGithubCard" href="#" target="_blank" rel="noopener">
-            <span class="link-card-icon">⌥</span>
-            <div class="link-card-body">
-              <h3>GitHub</h3>
-              <p>代码与开源项目</p>
-            </div>
-            <span class="tool-card-arrow">↗</span>
+        <div class="contact-row rv">
+          <a id="linkGithubCard" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            GitHub · 代码与开源项目
           </a>
-          <a class="link-card" id="linkCsdnCard" href="#" target="_blank" rel="noopener">
-            <span class="link-card-icon">C</span>
-            <div class="link-card-body">
-              <h3>CSDN 博客</h3>
-              <p>踩坑记录与技术分享</p>
-            </div>
-            <span class="tool-card-arrow">↗</span>
+          <a id="linkCsdnCard" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+            CSDN 博客 · 踩坑记录与技术分享
           </a>
         </div>
       </div>
 
+      <div class="rule-contour" aria-hidden="true">
+        <svg viewBox="0 0 1200 70" preserveAspectRatio="none">
+          <path d="M0 18 C200 6 360 28 600 16 S980 8 1200 18"/>
+          <path d="M0 38 C220 26 380 48 620 36 S1000 28 1200 38"/>
+          <path d="M0 58 C240 46 400 68 640 56 S1020 48 1200 58"/>
+        </svg>
+      </div>
       <footer class="footer">
-        <p>Built with ♥ by Mariana · 本站无追踪，纯静态托管</p>
-        <p class="footer-sub">© <span id="footerYear">2026</span> mariana.dev</p>
+        <p>Built with ♥ by Mariana · 本站无追踪 · 所有工具独立开发</p>
+        <p class="footer-sub">© <span data-year>2026</span> mariana.dev</p>
       </footer>
     </section>
 
-    <!-- ========== 工具箱 ========== -->
-    <section class="page" id="page-tools">
+    <!-- ========== 游戏作品 ========== -->
+    <section class="page" id="page-games">
       <div class="page-head">
-        <h1 class="page-title">工具箱</h1>
-        <p class="page-desc">点开就能用，数据都存在你自己的浏览器里，不上传任何服务器。</p>
+        <div class="sec-label">Game Works</div>
+        <h1 class="page-title">游戏作品</h1>
+        <p class="page-desc">Unity / VR / 桌面游戏 —— 从玩法原型到发布版本，正在慢慢把坑都填上。</p>
       </div>
-      <div class="tool-grid" id="toolsGrid">
-        <button class="tool-card" data-open-tool="markdown">
-          <div class="tool-card-icon icon-memo">📝</div>
-          <div class="tool-card-body">
-            <h3>Markdown 编辑器</h3>
-            <p>实时预览，支持常用 Markdown 语法。</p>
-          </div>
-          <span class="tool-card-arrow">→</span>
-        </button>
-        <button class="tool-card" data-open-tool="wheel">
-          <div class="tool-card-icon icon-wheel">🎯</div>
-          <div class="tool-card-body">
-            <h3>随机转盘</h3>
-            <p>自定义选项，转出你的答案。</p>
-          </div>
-          <span class="tool-card-arrow">→</span>
-        </button>
-        <button class="tool-card" data-open-tool="pomodoro">
-          <div class="tool-card-icon icon-pomodoro">🍅</div>
-          <div class="tool-card-body">
-            <h3>惜时 · 番茄钟</h3>
-            <p>专注计时 + 勋章 + 日历，我的完整作品。</p>
-          </div>
-          <span class="tool-card-arrow">→</span>
-        </button>
-        <button class="tool-card" data-open-tool="todo">
-          <div class="tool-card-icon icon-soon">✓</div>
-          <div class="tool-card-body">
-            <h3>待办清单</h3>
-            <p>任务增删改查，勾选完成，进度可视。</p>
-          </div>
-          <span class="tool-card-arrow">→</span>
-        </button>
-      </div>
-      <footer class="footer">
-        <p>Built with ♥ by Mariana · © <span>2026</span></p>
-      </footer>
-    </section>
-
-    <!-- ========== 作品 ========== -->
-    <section class="page" id="page-works">
-      <div class="page-head">
-        <h1 class="page-title">作品</h1>
-        <p class="page-desc">做过的项目，正在慢慢把坑都填上。</p>
-      </div>
-      <div class="works-list">
+      <div class="works-list" style="margin-top:32px">
         <article class="work-card">
-          <div class="work-cover cover-pomodoro"><span class="work-cover-text">惜时</span></div>
+          <div class="work-cover" style="--cover:linear-gradient(128deg,#6FA8FF,#1443C4)">VR</div>
           <div class="work-info">
-            <span class="work-tag">Web 应用</span>
-            <h3>惜时 · 番茄钟</h3>
-            <p>从设计到实现全程手写的专注计时器。支持倒计时/正计时双模式，10 套柔和配色、3 种视觉风格，内置勋章成就系统与专注日历，数据本地持久化。可以直接在工具箱里打开体验。</p>
-            <span class="work-meta">HTML · CSS · Vanilla JS · Vite</span>
-          </div>
-        </article>
-        <article class="work-card">
-          <div class="work-cover cover-vr"><span class="work-cover-text">VR</span></div>
-          <div class="work-info">
-            <span class="work-tag">Unity · XR</span>
+            <span class="tag">UNITY · XR</span>
             <h3>Unity VR 交互项目</h3>
             <p>使用 Timeline 编排多段交互序列，结合 XR Interaction Toolkit 实现手柄交互，并用 AVPro Video 播放 360° 视频，完成沉浸式 VR 体验流程。</p>
             <span class="work-meta">Unity · C# · Timeline · XR Interaction Toolkit · AVPro Video</span>
           </div>
         </article>
         <article class="work-card">
-          <div class="work-cover cover-comfy"><span class="work-cover-text">AI</span></div>
+          <div class="work-cover" style="--cover:linear-gradient(128deg,#3B78F0,#0A1E3C)">CPU</div>
           <div class="work-info">
-            <span class="work-tag">ComfyUI</span>
-            <h3>MiniMax H3 首尾帧视频工作流</h3>
-            <p>搭建 ComfyUI 工作流，基于 MiniMax H3 模型用首帧 + 尾帧生成连贯视频，探索 AI 生成内容在项目中的落地。</p>
-            <span class="work-meta">ComfyUI · MiniMax H3 · Python</span>
+            <span class="tag">WINDOWS 桌面游戏</span>
+            <h3>CPU Racer</h3>
+            <p>基于 .NET 8 自研的 2D 竞速游戏：Box2D 物理驱动赛车与碰撞，任务管理器联动、游戏内 Overlay、多语言本地化，已打包发布 v1.2.0 Windows 版。</p>
+            <span class="work-meta">C# · .NET 8 · Box2D · Vortice (DirectX) · SharpGen</span>
           </div>
         </article>
         <article class="work-card">
-          <div class="work-cover cover-twin"><span class="work-cover-text">孪生</span></div>
+          <div class="work-cover" style="--cover:var(--grad-sea)">TCG</div>
           <div class="work-info">
-            <span class="work-tag">数字孪生</span>
-            <h3>天津大船安全数字孪生项目</h3>
-            <p>参与安全数字孪生项目的方案与报告撰写，整理三维可视化与安全监控的技术路径。</p>
-            <span class="work-meta">数字孪生 · 技术方案 · 项目报告</span>
+            <span class="tag">UNITY · 开发中</span>
+            <h3>猫猫卡牌 · TCG 对战</h3>
+            <p>Unity 卡牌对战游戏：将 TCG Engine 的核心对战逻辑迁移到 GameFrameX 框架之上，独立规划英雄 / 法术 / 装备 / 秘密等 9 类卡牌体系与整套对战 UI 素材方案。</p>
+            <span class="work-meta">Unity · C# · GameFrameX · TCG Engine</span>
           </div>
         </article>
         <article class="work-card">
-          <div class="work-cover cover-batch"><span class="work-cover-text">工具</span></div>
+          <div class="work-cover" style="--cover:linear-gradient(128deg,#8FBEFF,#2B6DE8)">Party</div>
           <div class="work-info">
-            <span class="work-tag">效率工具</span>
-            <h3>WebM → MP4 批量转换</h3>
-            <p>写脚本批量把 webm 视频转成 mp4，处理大批量素材时省心省力。</p>
-            <span class="work-meta">Shell / FFmpeg / Python</span>
+            <span class="tag">UNITY DEMO</span>
+            <h3>Kitchen Party · 派对烹饪</h3>
+            <p>派对烹饪玩法 Demo：订单 - 烹饪 - 出餐的完整玩法循环与双人协作机制，配合 Cinemachine 运镜，完整可玩。</p>
+            <span class="work-meta">Unity · C# · Cinemachine</span>
           </div>
         </article>
       </div>
+      <div class="rule-contour" aria-hidden="true">
+        <svg viewBox="0 0 1200 70" preserveAspectRatio="none">
+          <path d="M0 18 C200 6 360 28 600 16 S980 8 1200 18"/>
+          <path d="M0 38 C220 26 380 48 620 36 S1000 28 1200 38"/>
+          <path d="M0 58 C240 46 400 68 640 56 S1020 48 1200 58"/>
+        </svg>
+      </div>
       <footer class="footer">
-        <p>Built with ♥ by Mariana · © <span>2026</span></p>
+        <p>Built with ♥ by Mariana</p>
+        <p class="footer-sub">© <span data-year>2026</span> mariana.dev</p>
+      </footer>
+    </section>
+
+    <!-- ========== 日常工具 ========== -->
+    <section class="page" id="page-tools">
+      <div class="page-head">
+        <div class="sec-label">Toolbox</div>
+        <h1 class="page-title">日常工具</h1>
+        <p class="page-desc">我做过的工具，和我部署的应用。站内工具点开即用，数据只存在你的浏览器里；全栈应用独立部署，点卡片直达。</p>
+      </div>
+
+      <div class="tools-toolbar">
+        <div class="tools-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="search" id="toolSearch" placeholder="搜索工具与应用…" autocomplete="off" aria-label="搜索工具与应用" />
+        </div>
+        <div class="tools-tags" id="toolTags" aria-label="按标签筛选"></div>
+      </div>
+      <p class="tools-empty" id="toolsEmpty" hidden>没有匹配的工具或应用，换个关键词试试。</p>
+
+      <h2 class="tools-sub" style="margin-top:32px">站内工具 <span class="tools-sub-hint">// 点开即用 · 点击卡片打开，↗ 新窗口打开</span></h2>
+      <div class="tool-grid" id="siteToolsGrid">
+        <div class="tool-card" role="button" tabindex="0" data-open-tool="markdown">
+          <div class="tool-top">
+            <div class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div>
+            <span class="tool-kind">站内</span>
+          </div>
+          <h3>Markdown 编辑器</h3>
+          <p class="tool-desc">实时预览，支持常用 Markdown 语法，自动保存。</p>
+          <span class="tool-go">打开工具 <span class="ar">→</span></span>
+          <a class="tool-ext" href="tools/markdown/index.html" target="_blank" rel="noopener" title="新窗口打开">↗</a>
+        </div>
+        <div class="tool-card" role="button" tabindex="0" data-open-tool="wheel">
+          <div class="tool-top">
+            <div class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v6l4-3M12 12l6-3"/></svg></div>
+            <span class="tool-kind">站内</span>
+          </div>
+          <h3>随机转盘</h3>
+          <p class="tool-desc">自定义选项与权重，转出你的答案。</p>
+          <span class="tool-go">打开工具 <span class="ar">→</span></span>
+          <a class="tool-ext" href="tools/wheel/index.html" target="_blank" rel="noopener" title="新窗口打开">↗</a>
+        </div>
+        <div class="tool-card" role="button" tabindex="0" data-open-tool="pomodoro">
+          <div class="tool-top">
+            <div class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6M12 5V2"/></svg></div>
+            <span class="tool-kind">站内</span>
+          </div>
+          <h3>惜时 · 番茄钟</h3>
+          <p class="tool-desc">专注计时 + 勋章 + 日历，我的完整作品。</p>
+          <span class="tool-go">打开工具 <span class="ar">→</span></span>
+          <a class="tool-ext" href="tools/pomodoro/index.html" target="_blank" rel="noopener" title="新窗口打开">↗</a>
+        </div>
+        <div class="tool-card" role="button" tabindex="0" data-open-tool="todo">
+          <div class="tool-top">
+            <div class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h8M8 16h5"/></svg></div>
+            <span class="tool-kind">站内</span>
+          </div>
+          <h3>待办清单</h3>
+          <p class="tool-desc">优先级、标签、筛选排序，进度可视。</p>
+          <span class="tool-go">打开工具 <span class="ar">→</span></span>
+          <a class="tool-ext" href="tools/todo/index.html" target="_blank" rel="noopener" title="新窗口打开">↗</a>
+        </div>
+      </div>
+
+      <h2 class="tools-sub">全栈应用 <span class="tools-sub-hint">// 独立完成 · 独立部署 · 点击直达</span></h2>
+      <div class="tool-grid" id="extToolsGrid"></div>
+
+      <div class="rule-contour" aria-hidden="true">
+        <svg viewBox="0 0 1200 70" preserveAspectRatio="none">
+          <path d="M0 18 C200 6 360 28 600 16 S980 8 1200 18"/>
+          <path d="M0 38 C220 26 380 48 620 36 S1000 28 1200 38"/>
+          <path d="M0 58 C240 46 400 68 640 56 S1020 48 1200 58"/>
+        </svg>
+      </div>
+      <footer class="footer">
+        <p>Built with ♥ by Mariana</p>
+        <p class="footer-sub">© <span data-year>2026</span> mariana.dev</p>
       </footer>
     </section>
 
     <!-- ========== 关于 ========== -->
     <section class="page" id="page-about">
       <div class="page-head">
+        <div class="sec-label">About</div>
         <h1 class="page-title">关于我</h1>
         <p class="page-desc">一个正在路上的人。</p>
       </div>
@@ -273,48 +450,92 @@
         <div class="about-card">
           <div class="about-avatar">M</div>
           <h3>Mariana</h3>
-          <p class="about-role">Unity 程序员 · 游戏开发方向</p>
+          <p class="about-role">游戏开发 × 全栈 · 求职中</p>
           <p class="about-bio">
-            白天写 Unity，晚上折腾自己的小项目。喜欢把一个想法从 0 做到能用的过程，
-            也喜欢记录踩过的坑。这个网站就是我的自留地：工具自己写，作品自己晒，博客慢慢更。
+            白天写 Unity 与 C#，晚上折腾自己的全栈项目。享受把一个想法从 0 做到能用的完整过程，
+            也习惯把踩过的坑沉淀成文档。本站、站内工具与全部全栈应用均为独立开发，
+            正在寻找游戏开发 / 全栈方向的机会。
           </p>
         </div>
         <div class="about-card">
           <h3 class="about-card-title">技能栈</h3>
           <div class="skill-list">
-            <div class="skill-row"><span>Unity / C#</span><div class="skill-bar"><i style="width:82%"></i></div></div>
-            <div class="skill-row"><span>XR / VR 开发</span><div class="skill-bar"><i style="width:75%"></i></div></div>
-            <div class="skill-row"><span>HTML / CSS / JS</span><div class="skill-bar"><i style="width:70%"></i></div></div>
-            <div class="skill-row"><span>Python / 自动化</span><div class="skill-bar"><i style="width:65%"></i></div></div>
-            <div class="skill-row"><span>ComfyUI / AI 工作流</span><div class="skill-bar"><i style="width:68%"></i></div></div>
+            <div class="skill-row"><span>Unity / C# · 游戏与 XR</span><div class="skill-bar"><i style="width:82%"></i></div></div>
+            <div class="skill-row"><span>JavaScript / TypeScript 全栈</span><div class="skill-bar"><i style="width:78%"></i></div></div>
+            <div class="skill-row"><span>C# / .NET 桌面开发</span><div class="skill-bar"><i style="width:75%"></i></div></div>
+            <div class="skill-row"><span>Python / FastAPI · AI 应用</span><div class="skill-bar"><i style="width:72%"></i></div></div>
+            <div class="skill-row"><span>小程序 / 跨端（Taro）</span><div class="skill-bar"><i style="width:68%"></i></div></div>
+            <div class="skill-row"><span>Android / Kotlin</span><div class="skill-bar"><i style="width:60%"></i></div></div>
           </div>
         </div>
       </div>
+
       <div class="section">
-        <div class="section-head">
-          <h2 class="section-title"><span class="section-no">04</span> 联系我</h2>
+        <div class="sec-head">
+          <div>
+            <div class="sec-label">01 · More Projects</div>
+            <h2 class="sec-title">更多项目经历</h2>
+          </div>
         </div>
-        <div class="links-row">
-          <a class="link-card" href="#" target="_blank" rel="noopener" id="linkGithubCard2">
-            <span class="link-card-icon">⌥</span>
-            <div class="link-card-body">
-              <h3>GitHub</h3>
-              <p>代码与开源项目</p>
+        <div class="works-list">
+          <article class="work-card">
+            <div class="work-cover" style="--cover:linear-gradient(128deg,#8FBEFF,#2B6DE8)">AI</div>
+            <div class="work-info">
+              <span class="tag">COMFYUI</span>
+              <h3>MiniMax H3 首尾帧视频工作流</h3>
+              <p>搭建 ComfyUI 工作流，基于 MiniMax H3 模型用首帧 + 尾帧生成连贯视频，探索 AI 生成内容在项目中的落地。</p>
+              <span class="work-meta">ComfyUI · MiniMax H3 · Python</span>
             </div>
-            <span class="tool-card-arrow">↗</span>
+          </article>
+          <article class="work-card">
+            <div class="work-cover" style="--cover:linear-gradient(128deg,#6FA8FF,#1443C4)">孪生</div>
+            <div class="work-info">
+              <span class="tag">数字孪生</span>
+              <h3>天津大船安全数字孪生项目</h3>
+              <p>参与安全数字孪生项目的方案与报告撰写，整理三维可视化与安全监控的技术路径。</p>
+              <span class="work-meta">数字孪生 · 技术方案 · 项目报告</span>
+            </div>
+          </article>
+          <article class="work-card">
+            <div class="work-cover" style="--cover:linear-gradient(128deg,#3B78F0,#0A1E3C)">工具</div>
+            <div class="work-info">
+              <span class="tag">效率工具</span>
+              <h3>WebM → MP4 批量转换</h3>
+              <p>写脚本批量把 webm 视频转成 mp4，处理大批量素材时省心省力。</p>
+              <span class="work-meta">Shell / FFmpeg / Python</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head">
+          <div>
+            <div class="sec-label">02 · Contact</div>
+            <h2 class="sec-title">联系我</h2>
+          </div>
+        </div>
+        <div class="contact-row">
+          <a id="linkGithubCard2" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            GitHub · 代码与开源项目
           </a>
-          <a class="link-card" href="#" target="_blank" rel="noopener" id="linkCsdnCard2">
-            <span class="link-card-icon">C</span>
-            <div class="link-card-body">
-              <h3>CSDN 博客</h3>
-              <p>踩坑记录与技术分享</p>
-            </div>
-            <span class="tool-card-arrow">↗</span>
+          <a id="linkCsdnCard2" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+            CSDN 博客 · 踩坑记录与技术分享
           </a>
         </div>
       </div>
+      <div class="rule-contour" aria-hidden="true">
+        <svg viewBox="0 0 1200 70" preserveAspectRatio="none">
+          <path d="M0 18 C200 6 360 28 600 16 S980 8 1200 18"/>
+          <path d="M0 38 C220 26 380 48 620 36 S1000 28 1200 38"/>
+          <path d="M0 58 C240 46 400 68 640 56 S1020 48 1200 58"/>
+        </svg>
+      </div>
       <footer class="footer">
-        <p>Built with ♥ by Mariana · © <span>2026</span></p>
+        <p>Built with ♥ by Mariana</p>
+        <p class="footer-sub">© <span data-year>2026</span> mariana.dev</p>
       </footer>
     </section>
 
@@ -324,7 +545,7 @@
   <div class="tool-overlay" id="toolOverlay" hidden>
     <div class="tool-window">
       <div class="tool-window-bar">
-        <span class="tool-window-title" id="toolWindowTitle">备忘录</span>
+        <span class="tool-window-title" id="toolWindowTitle">工具</span>
         <div class="tool-window-actions">
           <button class="tool-window-btn" id="toolBack" aria-label="返回">← 返回</button>
         </div>
@@ -333,6 +554,39 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=4"></script>
+  <!-- 卡片编辑弹窗（编辑模式） -->
+  <div class="edit-modal" id="editModal" hidden>
+    <div class="edit-panel" role="dialog" aria-modal="true" aria-label="编辑卡片">
+      <div class="edit-panel-title" id="editModalTitle">编辑卡片</div>
+      <label class="edit-field"><span>名称</span><input id="editName" maxlength="40" /></label>
+      <label class="edit-field"><span>描述</span><textarea id="editDesc" rows="3" maxlength="160"></textarea></label>
+      <label class="edit-field" id="editUrlField"><span>链接地址</span><input id="editUrl" placeholder="https://" /></label>
+      <div class="edit-actions">
+        <button type="button" class="edit-btn danger" id="editDelete">删除</button>
+        <span class="edit-spacer"></span>
+        <button type="button" class="edit-btn" id="editCancel">取消</button>
+        <button type="button" class="edit-btn" id="editReset">还原默认</button>
+        <button type="button" class="edit-btn primary" id="editSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ctrl+K 快速导航 -->
+  <div class="cmdk" id="cmdk" hidden>
+    <div class="cmdk-panel" role="dialog" aria-modal="true" aria-label="快速导航">
+      <div class="cmdk-input-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="cmdkInput" type="text" placeholder="搜索页面、工具、应用…" autocomplete="off" aria-label="快速导航搜索" />
+        <kbd>Esc</kbd>
+      </div>
+      <ul class="cmdk-list" id="cmdkList" role="listbox" aria-label="搜索结果"></ul>
+    </div>
+  </div>
+
+  <!-- 隐私友好统计预留位：部署后如需了解访问情况，取消注释并填入
+       自托管 Umami / Plausible 的脚本（无 Cookie，不收集个人信息）
+  <script defer src="https://your-analytics.example/script.js" data-website-id="xxxxxxxx"></script>
+  -->
+  <script src="js/main.js?v=11"></script>
 </body>
 </html>

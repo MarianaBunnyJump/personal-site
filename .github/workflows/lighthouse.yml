@@ -1,0 +1,19 @@
+name: Lighthouse
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli@0.14 autorun
+
+      # 结果会直接打印在 Actions 日志里；
+      # 若想看完整报告，可在 https://github.com/settings/tokens 生成 token 后
+      # 用 treosh/lighthouse-ci-action 上传到临时存储。
