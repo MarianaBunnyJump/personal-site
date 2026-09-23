@@ -10,6 +10,9 @@ desktop.ini
 .vscode/
 .idea/
 
+# Wrangler
+.wrangler/
+
 # Test artifacts
 test-*.png
 test-*.html
