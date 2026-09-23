@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /tools/
 
-# ★ 部署并绑定正式域名后，把下面一行换成你的域名（去掉行首 #）
-# Sitemap: https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link/sitemap.xml
+Sitemap: https://mariana.nikangd5300.workers.dev/sitemap.xml

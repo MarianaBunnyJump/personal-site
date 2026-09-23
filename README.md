@@ -4,7 +4,7 @@
 
 纯静态主站，全栈应用部署在自己的服务器（闲置笔记本）上。
 
-🌐 **在线访问：** [https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link](https://69c8c3a9f1f848f79ab4d808bd0dd850.app.workbuddy.link)
+🌐 **在线访问：** [https://mariana.nikangd5300.workers.dev](https://mariana.nikangd5300.workers.dev)（Cloudflare Workers 静态托管，push 到 GitHub 自动部署）
 
 ---
 
